@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta name="generator" content="Jekyll">
+
+  <title>Abusing privileges in Active Directory - SeRestorePrivilege</title>
+
+  <link rel="stylesheet" href="/css/main.css">
+  
+</head>
+
+<body>
+  <div id="wrapper">
+    <header>
+  <div>
+    <a href="/">
+    
+    <h1>xinyue@home:~$</h1>
+    </a>
+    <div class="header-links">
+      <a href="/archive"><h2 class="header-link">Archive</h2></a>
+<a href="/about"><h2 class="header-link">About</h2></a>
+    </div>
+  </div>
+</header>
+    <div class="container">
+      <section id="main_content">
+        <article>
+  <h2>Abusing privileges in Active Directory - SeRestorePrivilege</h2>
+  <time datetime="2024-06-15T00:00:00-07:00" class="by-line">15 Jun 2024</time>
+  <p>According to Microsoft, SeRestorePrivilege is utilized to grant write access within the file system, effectively bypassing Access Control Lists (ACLs) during file copying or modification. If this privilege is erroneously assigned to an account, malicious actors could exploit it to gain unauthorized access or elevate their privileges. A prevalent method for achieving privilege escalation involves exploiting Utilman.exe.</p>
+
+<p>Utilman.exe, which stands for “Utility Manager,” is a core Windows executable designed to aid users with disabilities by providing accessibility features. Operating with system-level privileges, Utilman.exe facilitates tasks such as launching accessibility tools at the login screen. However, this elevated access also makes it a potential target for exploitation. Attackers can replace Utilman.exe with an executable of their choice, such as cmd.exe (Command Prompt), effectively bypassing standard authentication mechanisms. This tactic grants them unrestricted access to execute commands with full system privileges. While legitimate for aiding users, such as in password recovery scenarios, this exploit can be abused by attackers seeking to compromise system integrity and security.</p>
+
+<h2 id="experiment">Experiment</h2>
+
+<p>When SeRestorePrivilege is observed among a user’s privileges, one might attempt to enable this privilege using a script like <a href="https://github.com/gtworek/PSBits/blob/master/Misc/EnableSeRestorePrivilege.ps1">EnableSeRestorePrivilege</a> . Once enabled, the Utilman.exe trick can be implemented for privilege escalation to the NT system level. This technique involves renaming cmd.exe to utilman.exe and then initiating a remote desktop session to the Windows machine to trigger the graphical user interface (GUI) login.</p>
+
+<p>It’s important to note that modifications such as renaming executables may be flagged and prevented by Windows Defender or other antivirus software or rejected by full disk encryption, which could detect such actions as suspicious or malicious. Upon reaching the login interface, pressing WIN + U can launch the command interface via Utilman.exe, now with system-level privileges.</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">PS</span><span class="w"> </span><span class="nx">C:\Users\</span><span class="err">&gt;</span><span class="w"> </span><span class="nx">whoami</span><span class="w"> </span><span class="nx">/priv</span><span class="w">
+
+</span><span class="n">PRIVILEGES</span><span class="w"> </span><span class="nx">INFORMATION</span><span class="w">
+</span><span class="o">----------------------</span><span class="w">
+
+</span><span class="n">Privilege</span><span class="w"> </span><span class="nx">Name</span><span class="w">                </span><span class="nx">Description</span><span class="w">                    </span><span class="nx">State</span><span class="w">
+</span><span class="o">=============================</span><span class="w"> </span><span class="o">==============================</span><span class="w"> </span><span class="o">=======</span><span class="w">
+</span><span class="n">SeMachineAccountPrivilege</span><span class="w">     </span><span class="nx">Add</span><span class="w"> </span><span class="nx">workstations</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">domain</span><span class="w">     </span><span class="nx">Enabled</span><span class="w">
+</span><span class="n">SeRestorePrivilege</span><span class="w">            </span><span class="nx">Restore</span><span class="w"> </span><span class="nx">files</span><span class="w"> </span><span class="nx">and</span><span class="w"> </span><span class="nx">directories</span><span class="w">  </span><span class="nx">Enabled</span><span class="w">
+</span><span class="n">SeChangeNotifyPrivilege</span><span class="w">       </span><span class="nx">Bypass</span><span class="w"> </span><span class="nx">traverse</span><span class="w"> </span><span class="nx">checking</span><span class="w">       </span><span class="nx">Enabled</span><span class="w">
+</span><span class="n">SeIncreaseWorkingSetPrivilege</span><span class="w"> </span><span class="nx">Increase</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="nx">process</span><span class="w"> </span><span class="nx">working</span><span class="w"> </span><span class="nx">set</span><span class="w"> </span><span class="nx">Enabled</span><span class="w">
+
+</span><span class="n">rename-item</span><span class="w"> </span><span class="nx">C:\Windows\system32\utilman.exe</span><span class="w"> </span><span class="nx">C:\Windows\system32\utilman.old</span><span class="w">
+</span><span class="n">rename-item</span><span class="w"> </span><span class="nx">C:\Windows\system32\cmd.exe</span><span class="w"> </span><span class="nx">C:\Windows\system32\utilman.exe</span><span class="w">
+
+</span><span class="n">rdesktop</span><span class="w"> </span><span class="nx">192.168.155.165</span><span class="w">
+</span><span class="n">WIN</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">U</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="../assets/images/abusing_privilege/rdp.png" alt="" /></p>
+
+<h2 id="reference">Reference:</h2>
+
+<blockquote>
+  <p>https://learn.microsoft.com/en-us/windows-hardware/drivers/ifs/privileges</p>
+</blockquote>
+
+</article>
+      </section>
+    </div>
+  </div>
+
+   <footer>
+  <a href="https://xxxinhy.github.io/">
+    <span>
+        <b>Xinyue</b>
+    </span>
+    
+    <span>© 2024</span>
+  </a>
+</footer>
+
+  
+</body>
+
+</html>

