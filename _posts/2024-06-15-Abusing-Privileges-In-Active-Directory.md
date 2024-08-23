@@ -33,7 +33,7 @@ rdesktop 192.168.155.165
 WIN + U
 ```
 
-![](../assets/images/abusing_privilege/rdp.png)
+![](../assets/images/2024-06-15-Abusing-Privileges-In-Active-Directory/rdp.png)
 
 ## Reference:
 
