@@ -13,7 +13,7 @@ At the beginning, we were provided with a box, which had pencil, notebook, steel
 
 How to find number from a smooth interface? We tried several approaches, like scratching and lighting the surface. After some research, we found the information was encoded directly within the magnetic stripe itself. There is an interesting article about this. https://www.abc.net.au/science/articles/2013/02/27/3699259.htm
 
-We filed iron filings from the nail and sprinkling them over the magnetic strip. Tilt the card and gently tap. Then collect the fillings and do it again. After several attempts, we are excited to find that some iron filings are stick to the magnetic strip, which forms the shape of barcode.
+We filed iron filings from the nail and sprinkling them over the magnetic strip. Tilted the card and gently tapped. Then collected the fillings and do it again. After several attempts, we were excited that some iron filings were stick to the magnetic strip, which formed the shape of barcode.
 
 We flipped the card upside down (180 degrees). The revealed barcode looks like this. 
 
@@ -21,7 +21,7 @@ We flipped the card upside down (180 degrees). The revealed barcode looks like t
 
 ### Barcode Decode
 
-Next task is read barcode. Since there is no available tools for us, we decided to read one by one. 
+Next task is read barcode. Since there was no available tools for us, we decided to read one by one. 
 
 The card number information is located in the Track2 (upper line in picture) . We read it five bit a number, the fifth bit is odd parity bit, so we only need to caculate four bits. The logic is pretty simple: if two strips has space between them, then it is 0; otherwise it’s 1.
 
