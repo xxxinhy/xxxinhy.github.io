@@ -29,7 +29,7 @@
       <section id="main_content">
         <article>
   <h2>MySQL LPE to RCE via WerTrigger</h2>
-  <time datetime="2024-06-26T00:00:00-07:00" class="by-line">26 Jun 2024</time>
+  <time datetime="2024-06-26T00:00:00-04:00" class="by-line">26 Jun 2024</time>
   <h1 id="overview">Overview</h1>
 
 <p>MySQL typically runs as a privileged user, such as the root account, making it a potential target for privilege escalation if not properly configured, such as having no password or a weak password for the root account. One method attackers can use to execute arbitrary commands as a privileged user is to exploit a malicious user-defined library. By uploading a malicious library to the plugin directory, attackers can define malicious functions and execute any command on the system with elevated privileges. Detailed information about this technique can be found <a href="https://book.hacktricks.xyz/network-services-pentesting/pentesting-mysql">here</a>.</p>

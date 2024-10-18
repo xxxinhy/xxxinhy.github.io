@@ -29,7 +29,7 @@
       <section id="main_content">
         <article>
   <h2>Abusing privileges in Active Directory - SeRestorePrivilege</h2>
-  <time datetime="2024-06-15T00:00:00-07:00" class="by-line">15 Jun 2024</time>
+  <time datetime="2024-06-15T00:00:00-04:00" class="by-line">15 Jun 2024</time>
   <p>According to Microsoft, SeRestorePrivilege is utilized to grant write access within the file system, effectively bypassing Access Control Lists (ACLs) during file copying or modification. If this privilege is erroneously assigned to an account, malicious actors could exploit it to gain unauthorized access or elevate their privileges. A prevalent method for achieving privilege escalation involves exploiting Utilman.exe.</p>
 
 <p>Utilman.exe, which stands for “Utility Manager,” is a core Windows executable designed to aid users with disabilities by providing accessibility features. Operating with system-level privileges, Utilman.exe facilitates tasks such as launching accessibility tools at the login screen. However, this elevated access also makes it a potential target for exploitation. Attackers can replace Utilman.exe with an executable of their choice, such as cmd.exe (Command Prompt), effectively bypassing standard authentication mechanisms. This tactic grants them unrestricted access to execute commands with full system privileges. While legitimate for aiding users, such as in password recovery scenarios, this exploit can be abused by attackers seeking to compromise system integrity and security.</p>

